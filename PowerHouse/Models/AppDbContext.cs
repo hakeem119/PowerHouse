@@ -7,12 +7,12 @@ namespace PowerHouse.Models
     {
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 
-        public DbSet<User> Users => Set<User>();
-        public DbSet<Branch> Branches => Set<Branch>();
-        public DbSet<SubscriptionPlan> SubscriptionPlans => Set<SubscriptionPlan>();
-        public DbSet<Subscription> Subscriptions => Set<Subscription>();
-        public DbSet<CheckIn> CheckIns => Set<CheckIn>();
-
+        public DbSet<User> Users { get; set; }
+        public DbSet<Branch> Branches { get; set; }
+        public DbSet<SubscriptionPlan> SubscriptionPlans { get; set; }
+        public DbSet<Subscription> Subscriptions { get; set; }
+        public DbSet<CheckIn> CheckIns { get; set; }
+        public DbSet<GymPhoto> GymPhotos { get; set; }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             
