@@ -1,8 +1,75 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+@model User
+@{ ViewData["Title"] = "الرئيسية"; }
+<div class="page-header">
+    <h1>أهلاً، @Model?.Name! 💪</h1>
+    <p class="page-subtitle">هنا ملخص حسابك في PowerHouse</p>
+</div>
+
+@{
+    var activeSub = Model?.Subscriptions.FirstOrDefault(s => s.EndDate >= DateTime.UtcNow);
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="stats-grid">
+    <div class="stat-card @(activeSub != null ? "stat-green" : "stat-red")">
+        <div class="stat-icon">🏅</div>
+        <div class="stat-body">
+            <h3>حالة الاشتراك</h3>
+            @if (activeSub != null)
+            {
+                <p class="stat-value">نشط</p>
+                <small>ينتهي: @activeSub.EndDate.ToString("dd/MM/yyyy")</small>
+                <br/><small>الخطة: @activeSub.Plan?.Name</small>
+            }
+            else
+            {
+                <p class="stat-value">غير نشط</p>
+                <a href="/Subscription" class="btn-sm">جدد الآن</a>
+            }
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon">🏢</div>
+        <div class="stat-body">
+            <h3>الفرع الأساسي</h3>
+            <p class="stat-value">@(Model?.MainBranch?.Name ?? "غير محدد")</p>
+            <small>@Model?.MainBranch?.Address</small>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon">📊</div>
+        <div class="stat-body">
+            <h3>إجمالي زياراتك</h3>
+            <p class="stat-value">@Model?.CheckIns.Count</p>
+            <small>زيارة مسجلة</small>
+        </div>
+    </div>
+</div>
+
+<div class="section">
+    <h2 class="section-title">آخر زياراتك</h2>
+    @if (Model?.CheckIns.Any() == true)
+    {
+        <table class="data-table">
+            <thead><tr><th>التاريخ</th><th>الوقت</th><th>الفرع</th></tr></thead>
+            <tbody>
+                @foreach (var c in Model.CheckIns.OrderByDescending(x => x.CheckInTime).Take(5))
+                {
+                    <tr>
+                        <td>@c.CheckInTime.ToString("dd/MM/yyyy")</td>
+                        <td>@c.CheckInTime.ToString("HH:mm")</td>
+                        <td>@c.Branch?.Name</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <div class="empty-state">لم تقم بأي زيارة بعد. <a href="/CheckIn">سجّل دخولك الآن!</a></div>
+    }
+</div>
+
+<div class="action-buttons">
+    <a href="/CheckIn" class="btn-primary">سجّل دخولك ⚡</a>
+    <a href="/Subscription" class="btn-secondary">إدارة الاشتراك</a>
 </div>

@@ -1,0 +1,45 @@
+@{ ViewData["Title"] = "تسجيل الدخول للجيم"; }
+<div class="page-header">
+    <h1>تسجيل الدخول 🏋️</h1>
+    <p class="page-subtitle">اختر الفرع اللي انت فيه</p>
+</div>
+
+<div class="checkin-grid">
+    @foreach (var branch in (List<Branch>)ViewBag.Branches)
+    {
+        <div class="branch-card">
+            <div class="branch-icon">🏢</div>
+            <h3>@branch.Name</h3>
+            <p>@branch.Address</p>
+            <form asp-action="CheckIn" asp-controller="CheckIn" method="post">
+                <input type="hidden" name="branchId" value="@branch.Id" />
+                <button type="submit" class="btn-primary btn-full">دخول هنا ⚡</button>
+            </form>
+        </div>
+    }
+</div>
+
+<div class="section">
+    <h2 class="section-title">سجل زياراتك الأخيرة</h2>
+    @{var history = (List<CheckIn>)ViewBag.History;}
+    @if (history.Any())
+    {
+        <table class="data-table">
+            <thead><tr><th>التاريخ</th><th>الوقت</th><th>الفرع</th></tr></thead>
+            <tbody>
+                @foreach (var c in history)
+                {
+                    <tr>
+                        <td>@c.CheckInTime.ToString("dd/MM/yyyy")</td>
+                        <td>@c.CheckInTime.ToString("HH:mm")</td>
+                        <td>@c.Branch?.Name</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <div class="empty-state">لا يوجد سجل زيارات حتى الآن.</div>
+    }
+</div>

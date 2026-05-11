@@ -1,32 +1,28 @@
-using System.Diagnostics;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using PowerHouse.Models;
+using System.Diagnostics;
+using System.Security.Claims;
 
 namespace PowerHouse.Controllers
 {
+    [Authorize]
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
+        private readonly AppDbContext _db;
+        public HomeController(AppDbContext db) => _db = db;
 
-        public HomeController(ILogger<HomeController> logger)
+        public async Task<IActionResult> Index()
         {
-            _logger = logger;
-        }
+            var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+            var user = await _db.Users
+                .Include(u => u.MainBranch)
+                .Include(u => u.Subscriptions).ThenInclude(s => s.Plan)
+                .Include(u => u.CheckIns).ThenInclude(c => c.Branch)
+                .FirstOrDefaultAsync(u => u.Id == userId);
 
-        public IActionResult Index()
-        {
-            return View();
-        }
-
-        public IActionResult Privacy()
-        {
-            return View();
-        }
-
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
-        {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            return View(user);
         }
     }
 }

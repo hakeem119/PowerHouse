@@ -1,0 +1,23 @@
+@model List<Branch>
+@{ ViewData["Title"] = "الفروع"; }
+<div class="page-header">
+    <h1>إدارة الفروع 🏢</h1>
+    <a href="/Admin/AddBranch" class="btn-primary">+ إضافة فرع جديد</a>
+</div>
+<div class="branches-grid">
+    @foreach (var b in Model)
+    {
+        <div class="branch-admin-card">
+            <h3>@b.Name</h3>
+            <p>📍 @b.Address</p>
+            <div class="branch-stats">
+                <span>👥 @b.Members.Count عضو</span>
+                <span>📊 @b.CheckIns.Count زيارة</span>
+            </div>
+            <form asp-action="DeleteBranch" asp-controller="Admin" method="post" style="margin-top:10px">
+                <input type="hidden" name="id" value="@b.Id" />
+                <button type="submit" class="btn-danger" onclick="return confirm('حذف الفرع؟')">حذف</button>
+            </form>
+        </div>
+    }
+</div>

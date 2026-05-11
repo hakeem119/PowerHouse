@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 
 namespace PowerHouse
@@ -13,7 +14,14 @@ namespace PowerHouse
             builder.Services.AddControllersWithViews();
                 builder.Services.AddDbContext<Models.AppDbContext>(options =>
                     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
-    
+            builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+            .AddCookie(opt =>
+            {
+                opt.LoginPath = "/Account/Login";
+                opt.LogoutPath = "/Account/Logout";
+                opt.AccessDeniedPath = "/Account/Login";
+                opt.ExpireTimeSpan = TimeSpan.FromDays(7);
+            });
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.

@@ -1,0 +1,126 @@
+@model List<GymPhoto>
+@{ ViewData["Title"] = "صور الجيم"; }
+
+<div class="page-header">
+    <h1>صور الجيم 📸</h1>
+    <p class="page-subtitle">إدارة صور وألبوم الجيم</p>
+</div>
+
+
+<div class="upload-card">
+    <h2 class="section-title">➕ رفع صورة جديدة</h2>
+    <form asp-action="UploadPhoto" asp-controller="Admin" method="post" enctype="multipart/form-data">
+        <div class="upload-form-grid">
+            <div class="form-group">
+                <label>عنوان الصورة</label>
+                <input type="text" name="title" class="form-input" placeholder="مثال: قاعة الأوزان" />
+            </div>
+            <div class="form-group">
+                <label>الفرع (اختياري)</label>
+                <select name="branchId" class="form-input">
+                    <option value="0">-- كل الفروع --</option>
+                    @foreach (var b in (List<Branch>)ViewBag.Branches)
+                    {
+                        <option value="@b.Id">@b.Name</option>
+                    }
+                </select>
+            </div>
+            <div class="form-group full-width">
+                <label>وصف الصورة (اختياري)</label>
+                <input type="text" name="description" class="form-input" placeholder="وصف مختصر..." />
+            </div>
+            <div class="form-group full-width">
+                <label>اختر الصورة</label>
+                <div class="file-drop-zone" id="dropZone">
+                    <input type="file" name="photoFile" id="photoFile" accept="image/*" class="file-input" onchange="previewImage(this)" />
+                    <div class="drop-content" id="dropContent">
+                        <span class="drop-icon">🖼️</span>
+                        <p>اسحب الصورة هنا أو <strong>اضغط للاختيار</strong></p>
+                        <small>JPG, PNG, WEBP — حد أقصى 5MB</small>
+                    </div>
+                    <img id="previewImg" src="" alt="" style="display:none; max-height:200px; border-radius:10px; margin-top:10px;" />
+                </div>
+            </div>
+        </div>
+        <button type="submit" class="btn-primary" style="margin-top:1rem;">رفع الصورة ⚡</button>
+    </form>
+</div>
+
+
+@if (Model.Any())
+{
+    <div class="section" style="margin-top:2rem;">
+        <h2 class="section-title">🖼️ الألبوم (@Model.Count صورة)</h2>
+        <div class="photo-gallery">
+            @foreach (var photo in Model)
+            {
+                <div class="photo-item">
+                    <div class="photo-img-wrap">
+                        <img src="/uploads/gym/@photo.FileName" alt="@photo.Title" loading="lazy" onclick="openLightbox(this)" />
+                        <div class="photo-overlay">
+                            <form asp-action="DeletePhoto" asp-controller="Admin" method="post"
+                                  onsubmit="return confirm('حذف هذه الصورة؟')">
+                                <input type="hidden" name="id" value="@photo.Id" />
+                                <button type="submit" class="btn-delete-photo">🗑️ حذف</button>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="photo-info">
+                        <h4>@photo.Title</h4>
+                        @if (!string.IsNullOrEmpty(photo.Description))
+                        {
+                            <p>@photo.Description</p>
+                        }
+                        <small>
+                            @(photo.Branch != null ? "📍 " + photo.Branch.Name : "📍 كل الفروع")
+                            · @photo.UploadedAt.ToString("dd/MM/yyyy")
+                        </small>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+}
+else
+{
+    <div class="empty-state" style="margin-top:2rem;">
+        <p style="font-size:3rem;">📷</p>
+        <p>لا توجد صور بعد. ارفع أول صورة!</p>
+    </div>
+}
+
+
+<div id="lightbox" onclick="closeLightbox()" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.92); z-index:9999; display:none; align-items:center; justify-content:center; cursor:zoom-out;">
+    <img id="lightboxImg" src="" style="max-width:90vw; max-height:90vh; border-radius:12px; box-shadow:0 0 60px rgba(0,0,0,0.8);" />
+</div>
+
+
+<script>
+function previewImage(input) {
+    const img = document.getElementById('previewImg');
+    const dropContent = document.getElementById('dropContent');
+    if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = e => {
+            img.src = e.target.result;
+            img.style.display = 'block';
+            dropContent.style.display = 'none';
+        };
+        reader.readAsDataURL(input.files[0]);
+    }
+}
+
+function openLightbox(img) {
+    const lb = document.getElementById('lightbox');
+    document.getElementById('lightboxImg').src = img.src;
+    lb.style.display = 'flex';
+}
+
+function closeLightbox() {
+    document.getElementById('lightbox').style.display = 'none';
+}
+
+document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') closeLightbox();
+});
+</script>

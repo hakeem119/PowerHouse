@@ -1,0 +1,35 @@
+@model List<SubscriptionPlan>
+@{ ViewData["Title"] = "الاشتراكات"; }
+<div class="page-header">
+    <h1>خطط الاشتراك 🏆</h1>
+    <p class="page-subtitle">اختر الخطة المناسبة ليك</p>
+</div>
+
+@if (ViewBag.ActiveSubscription != null)
+{
+    var sub = (Subscription)ViewBag.ActiveSubscription;
+    <div class="active-sub-banner">
+        ✅ اشتراكك النشط: <strong>@sub.Plan?.Name</strong> — ينتهي في <strong>@sub.EndDate.ToString("dd/MM/yyyy")</strong>
+    </div>
+}
+
+<div class="plans-grid">
+    @foreach (var plan in Model)
+    {
+        var isPopular = plan.Id == 2;
+        <div class="plan-card @(isPopular ? "plan-featured" : "")">
+            @if (isPopular) { <div class="plan-badge">الأكثر شيوعاً ⭐</div> }
+            <h2 class="plan-name">@plan.Name</h2>
+            <div class="plan-price">
+                <span class="price-value">@plan.Price</span>
+                <span class="price-currency">جنيه</span>
+            </div>
+            <p class="plan-desc">@plan.Description</p>
+            <p class="plan-duration">⏱️ @plan.DurationInDays يوم</p>
+            <form asp-action="Subscribe" asp-controller="Subscription" method="post">
+                <input type="hidden" name="planId" value="@plan.Id" />
+                <button type="submit" class="btn-primary btn-full">اشترك الآن</button>
+            </form>
+        </div>
+    }
+</div>

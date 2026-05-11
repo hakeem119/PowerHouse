@@ -1,0 +1,22 @@
+@model Branch
+@{ ViewData["Title"] = "إضافة فرع"; }
+<div class="page-header">
+    <h1>إضافة فرع جديد 🏢</h1>
+</div>
+<div class="form-card">
+    <form asp-action="AddBranch" method="post">
+        <div asp-validation-summary="All" class="validation-summary"></div>
+        <div class="form-group">
+            <label>اسم الفرع</label>
+            <input asp-for="Name" class="form-input" placeholder="مثال: فرع المعادي" />
+        </div>
+        <div class="form-group">
+            <label>العنوان</label>
+            <input asp-for="Address" class="form-input" placeholder="العنوان بالتفصيل" />
+        </div>
+        <div class="action-buttons">
+            <button type="submit" class="btn-primary">حفظ الفرع</button>
+            <a href="/Admin/Branches" class="btn-secondary">إلغاء</a>
+        </div>
+    </form>
+</div>

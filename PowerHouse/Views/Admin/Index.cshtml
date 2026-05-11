@@ -1,0 +1,74 @@
+@model PowerHouse.VM.AdminDashboardViewModel
+@{
+    ViewData["Title"] = "لوحة التحكم";
+}
+<div class="page-header">
+    <h1>لوحة التحكم 📊</h1>
+    <p class="page-subtitle">نظرة عامة على PowerHouse Gym</p>
+</div>
+
+<div class="stats-grid">
+    <div class="stat-card stat-blue">
+        <div class="stat-icon">👥</div>
+        <div class="stat-body">
+            <h3>إجمالي الأعضاء</h3>
+            <p class="stat-value">@Model.TotalMembers</p>
+        </div>
+    </div>
+    <div class="stat-card stat-green">
+        <div class="stat-icon">✅</div>
+        <div class="stat-body">
+            <h3>اشتراكات نشطة</h3>
+            <p class="stat-value">@Model.ActiveSubscriptions</p>
+        </div>
+    </div>
+    <div class="stat-card stat-orange">
+        <div class="stat-icon">📅</div>
+        <div class="stat-body">
+            <h3>زيارات اليوم</h3>
+            <p class="stat-value">@Model.TotalVisitsToday</p>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon">📈</div>
+        <div class="stat-body">
+            <h3>إجمالي الزيارات</h3>
+            <p class="stat-value">@Model.TotalVisitsAllTime</p>
+        </div>
+    </div>
+</div>
+
+<div class="dashboard-grid">
+    <div class="section">
+        <h2 class="section-title">إحصائيات الفروع</h2>
+        <table class="data-table">
+            <thead><tr><th>الفرع</th><th>الأعضاء</th><th>زيارات اليوم</th></tr></thead>
+            <tbody>
+                @foreach (var b in Model.BranchStats)
+                {
+                    <tr>
+                        <td>@b.BranchName</td>
+                        <td>@b.TotalMembers</td>
+                        <td><span class="badge badge-blue">@b.VisitsToday</span></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    <div class="section">
+        <h2 class="section-title">آخر الزيارات</h2>
+        <table class="data-table">
+            <thead><tr><th>العضو</th><th>الفرع</th><th>الوقت</th></tr></thead>
+            <tbody>
+                @foreach (var c in Model.RecentCheckIns)
+                {
+                    <tr>
+                        <td>@c.MemberName</td>
+                        <td>@c.BranchName</td>
+                        <td>@c.CheckInTime.ToString("HH:mm dd/MM")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

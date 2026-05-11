@@ -1,0 +1,31 @@
+@model List<User>
+@{ ViewData["Title"] = "الأعضاء"; }
+<div class="page-header">
+    <h1>إدارة الأعضاء 👥</h1>
+    <p class="page-subtitle">قائمة جميع الأعضاء المسجلين</p>
+</div>
+<div class="section">
+    <table class="data-table">
+        <thead>
+            <tr><th>الاسم</th><th>الموبايل</th><th>الفرع</th><th>حالة الاشتراك</th><th>تاريخ التسجيل</th></tr>
+        </thead>
+        <tbody>
+            @foreach (var u in Model)
+            {
+                var active = u.Subscriptions.FirstOrDefault(s => s.EndDate >= DateTime.UtcNow);
+                <tr>
+                    <td>@u.Name</td>
+                    <td>@u.Phone</td>
+                    <td>@(u.MainBranch?.Name ?? "—")</td>
+                    <td>
+                        @if (active != null)
+                        { <span class="badge badge-green">نشط - @active.Plan?.Name</span> }
+                        else
+                        { <span class="badge badge-red">منتهي</span> }
+                    </td>
+                    <td>@u.CreatedAt.ToString("dd/MM/yyyy")</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

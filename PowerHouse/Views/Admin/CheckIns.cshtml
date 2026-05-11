@@ -1,0 +1,22 @@
+@model List<CheckIn>
+@{ ViewData["Title"] = "سجل الزيارات"; }
+<div class="page-header">
+    <h1>سجل جميع الزيارات 📋</h1>
+    <p class="page-subtitle">آخر 100 زيارة</p>
+</div>
+<div class="section">
+    <table class="data-table">
+        <thead><tr><th>العضو</th><th>الفرع</th><th>التاريخ</th><th>الوقت</th></tr></thead>
+        <tbody>
+            @foreach (var c in Model)
+            {
+                <tr>
+                    <td>@c.User?.Name</td>
+                    <td>@c.Branch?.Name</td>
+                    <td>@c.CheckInTime.ToString("dd/MM/yyyy")</td>
+                    <td>@c.CheckInTime.ToString("HH:mm")</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
